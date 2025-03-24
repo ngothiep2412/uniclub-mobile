@@ -10,6 +10,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.unihub.ui.theme.ComposeTheme
 import com.example.unihub.uniclub.navigation.RootNavigationGraph
 import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.koinInject
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -33,9 +34,11 @@ class MainActivity : ComponentActivity() {
                 RootNavigationGraph(
                     navController = rememberNavController(),
                     viewModel = koinViewModel(),
-                ) {
-                    keepSplashOnScreen = false
-                }
+                    tokenExpirationHandler = koinInject(),
+                    onDataLoaded = {
+                        keepSplashOnScreen = false
+                    }
+                )
             }
         }
     }

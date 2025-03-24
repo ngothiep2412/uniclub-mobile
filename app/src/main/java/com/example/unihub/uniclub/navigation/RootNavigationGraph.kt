@@ -15,20 +15,23 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.unihub.ui.theme.ComposeTheme
+import com.example.unihub.uniclub.data.network.TokenExpirationHandler
 import com.example.unihub.uniclub.navigation.graph.authNav
 import com.example.unihub.uniclub.navigation.model.Screen
 import com.example.unihub.uniclub.presentation.main.MainScreen
 import com.example.unihub.uniclub.presentation.main.MainViewModel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.compose.koinViewModel
 import timber.log.Timber
-
+import org.koin.compose.koinInject
 
 @Composable
 fun RootNavigationGraph(
     navController: NavHostController,
     viewModel: MainViewModel,
     onDataLoaded: () -> Unit,
+    tokenExpirationHandler: TokenExpirationHandler = koinInject()
 ) {
 
     var fakeLoading by remember { mutableStateOf(true) }
@@ -36,6 +39,21 @@ fun RootNavigationGraph(
 
     val session = viewModel.getSession().observeAsState()
     Timber.d("Session: ${session.value}")
+
+
+    // Listen for token expiration events
+    LaunchedEffect(key1 = Unit) {
+        tokenExpirationHandler.tokenExpired.collectLatest {
+            // Navigate to auth screen when token expires
+            Timber.d("Token expired, navigating to auth screen")
+            navController.navigate(Screen.AuthNav.route) {
+                // Clear the back stack
+                popUpTo(Screen.Root.route) {
+                    inclusive = true
+                }
+            }
+        }
+    }
 
 
     LaunchedEffect(Unit) {
@@ -134,7 +152,9 @@ private fun RootNavigationGraphPreview() {
     ComposeTheme {
         RootNavigationGraph(
             navController = rememberNavController(),
-            viewModel = koinViewModel()
-        ) {}
+            viewModel = koinViewModel(),
+            tokenExpirationHandler = koinInject(),
+            onDataLoaded = {},
+        )
     }
 }

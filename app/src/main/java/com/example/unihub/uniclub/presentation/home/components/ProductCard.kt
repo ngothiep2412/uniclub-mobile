@@ -35,16 +35,7 @@ import androidx.compose.ui.unit.sp
 import androidx.core.graphics.toColorInt
 import coil.compose.AsyncImage
 import com.example.unihub.R
-import com.example.unihub.uniclub.domain.CategoryModel
 import com.example.vibestore.ui.theme.poppinsFontFamily
-
-data class Product(
-    val id: String,
-    val name: String,
-    val price: Double,
-    val imageUrl: String,
-    val category: String
-)
 
 
 @Composable
@@ -54,7 +45,7 @@ fun ProductCard(
     title: String,
     rating: String,
     price: String,
-    categories: List<CategoryModel>,
+    categories: List<String>,
     addToCart: () -> Unit,
 ) {
     val ratingState by remember { mutableFloatStateOf(rating.toFloat()) }
@@ -67,7 +58,7 @@ fun ProductCard(
         horizontalAlignment = Alignment.Start
     ) {
         AsyncImage(
-            model = image,
+            model = "https://marinaracewear.com/storage/media/attributes/9/0/8/6/6/90866/conversions/2-category.jpg",
             contentDescription = null,
             contentScale = ContentScale.Fit,
             modifier = Modifier
@@ -94,7 +85,7 @@ fun ProductCard(
                         .padding(horizontal = 8.dp, vertical = 4.dp)
                 ) {
                     Text(
-                        text = it.name,
+                        text = it,
                         fontSize = 12.sp,
                         fontFamily = poppinsFontFamily,
                         color = Color.White

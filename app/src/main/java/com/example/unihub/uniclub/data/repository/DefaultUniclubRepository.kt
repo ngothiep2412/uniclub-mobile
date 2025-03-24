@@ -10,26 +10,20 @@ import com.example.unihub.uniclub.domain.UniclubDataSource
 import com.example.unihub.uniclub.domain.UniclubRepository
 import timber.log.Timber
 
-class DefaultUniclubRepository(
-    private val dataSource: UniclubDataSource
-) : UniclubRepository {
+class DefaultUniclubRepository(private val dataSource: UniclubDataSource) : UniclubRepository {
     override suspend fun getProducts(): Result<List<ProductModel>, NetworkError> {
         return dataSource.getProducts().map { apiResponse ->
             Timber.d("getBrand: ${apiResponse.data}")
             apiResponse.data?.map { productDto ->
                 ProductModel(
-                    id = productDto.id,
-                    name = productDto.name,
-                    link = productDto.link,
-                    price = productDto.price,
-                    categories = productDto.categories.map { categoryDto ->
-                        CategoryModel(
-                            id = categoryDto.id,
-                            name = categoryDto.name
-                        )
-                    }
+                        id = productDto.id,
+                        name = productDto.name,
+                        link = productDto.link,
+                        price = productDto.price,
+                        categories = productDto.categories
                 )
-            } ?: emptyList()
+            }
+                    ?: emptyList()
         }
     }
 
@@ -37,27 +31,31 @@ class DefaultUniclubRepository(
         return dataSource.getCategories().map { apiResponse ->
             apiResponse.data?.map {
                 CategoryModel(
-                    id = it.id,
-                    name = it.name,
+                        id = it.id,
+                        name = it.name,
                 )
-            } ?: emptyList()
-        };
+            }
+                    ?: emptyList()
+        }
     }
 
     override suspend fun getBrands(): Result<List<BrandModel>, NetworkError> {
-        return dataSource.getBrands().map {apiResponse ->
+        return dataSource.getBrands().map { apiResponse ->
             Timber.d("getBrand: ${apiResponse.data}")
             apiResponse.data?.map {
                 BrandModel(
-                    id = it.id,
-                    name = it.name,
+                        id = it.id,
+                        name = it.name,
                 )
-            } ?: emptyList()
-        };
+            }
+                    ?: emptyList()
+        }
     }
 
     override suspend fun login(email: String, password: String): Result<String, NetworkError> {
-        return dataSource.login(email, password)
+        return dataSource.login(email, password).map { apiResponse ->
+            Timber.d("login: ${apiResponse.data}")
+            apiResponse.data ?: ""
+        }
     }
-
 }

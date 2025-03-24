@@ -8,5 +8,5 @@ data class ProductModel(
     val name: String,
     val link: String,
     val price: Double,
-    val categories: List<CategoryModel>
+    val categories: List<String>
 )

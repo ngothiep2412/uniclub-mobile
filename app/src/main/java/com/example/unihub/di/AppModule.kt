@@ -2,6 +2,7 @@ package com.example.unihub.di
 
 import com.example.unihub.core.data.networking.HttpClientFactory
 import com.example.unihub.uniclub.data.network.RemoteUniclubDataSource
+import com.example.unihub.uniclub.data.network.TokenExpirationHandler
 import com.example.unihub.uniclub.data.repository.DefaultUniclubRepository
 import com.example.unihub.uniclub.domain.UniclubDataSource
 import com.example.unihub.uniclub.domain.UniclubRepository
@@ -26,10 +27,15 @@ val appModule = module {
 
     singleOf(::DefaultUniclubRepository).bind<UniclubRepository>()
 
-    single<UniclubDataSource> { RemoteUniclubDataSource(get()) }
+    single<UniclubDataSource> { RemoteUniclubDataSource(get(), get()) }
+
 
     viewModelOf(::LoginViewModel)
     viewModelOf(::HomeViewModel)
     viewModelOf(::MainViewModel)
 }
 
+
+val authModule = module {
+    single { TokenExpirationHandler(get()) }
+}

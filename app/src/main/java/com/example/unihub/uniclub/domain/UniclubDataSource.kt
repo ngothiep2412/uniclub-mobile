@@ -5,7 +5,7 @@ import com.example.unihub.core.domain.util.NetworkError
 import com.example.unihub.core.domain.util.Result
 
 interface UniclubDataSource {
-    suspend fun login(email: String, password: String) : Result<String, NetworkError>
+    suspend fun login(email: String, password: String) : Result<ApiResponseDTO<String>, NetworkError>
 
     suspend fun getProducts(): Result<ApiResponseDTO<List<ProductModel>>, NetworkError>
 
